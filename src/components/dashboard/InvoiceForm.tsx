@@ -15,12 +15,15 @@ interface LineItem {
   total: number;
 }
 
+import { Client } from "@/lib/api";
+
 interface InvoiceFormProps {
   initialData?: {
     invoiceNumber?: string;
     invoiceDate?: string;
     dueDate?: string;
     currency?: string;
+    clientId?: string;
     clientName?: string;
     clientEmail?: string;
     clientPhone?: string;
@@ -30,19 +33,23 @@ interface InvoiceFormProps {
     notes?: string;
     paymentTerms?: string;
     additionalInfo?: string;
+    status?: string;
   };
+  clients?: Client[];
   onSubmit?: (data: any) => void;
   onCancel?: () => void;
   className?: string;
+  isPending?: boolean;
 }
 
 const InvoiceForm = ({
   initialData = {},
+  clients = [],
   onSubmit = () => {},
   onCancel = () => {},
   className = "",
+  isPending = false,
 }: InvoiceFormProps) => {
-  const [isPending, setIsPending] = useState(false);
   const [lineItems, setLineItems] = useState<LineItem[]>(
     initialData.lineItems || [
       {
@@ -77,20 +84,15 @@ const InvoiceForm = ({
   const total = subtotal + taxAmount - discount;
 
   const handleSave = () => {
-    setIsPending(true);
-    // Simulate API call
-    setTimeout(() => {
-      const formData = {
-        ...initialData,
-        lineItems,
-        subtotal,
-        taxAmount,
-        discount,
-        total,
-      };
-      onSubmit(formData);
-      setIsPending(false);
-    }, 1000);
+    const formData = {
+      ...initialData,
+      lineItems,
+      subtotal,
+      taxAmount,
+      discount,
+      total,
+    };
+    onSubmit(formData);
   };
 
   const handleLineItemsChange = (updatedItems: LineItem[]) => {

@@ -11,22 +11,30 @@ import {
 } from "@/components/ui/select";
 import { Search, Plus, X } from "lucide-react";
 
+import { Client } from "@/lib/api";
+
 interface ClientSectionProps {
   className?: string;
+  clientId?: string;
   clientName?: string;
   clientEmail?: string;
   clientPhone?: string;
   clientAddress?: string;
   clientType?: string;
+  clients?: Client[];
+  onClientChange?: (clientId: string) => void;
 }
 
 const ClientSection = ({
   className = "",
+  clientId = "",
   clientName = "",
   clientEmail = "",
   clientPhone = "",
   clientAddress = "",
   clientType = "business",
+  clients = [],
+  onClientChange = () => {},
 }: ClientSectionProps) => {
   return (
     <Card className={`w-full bg-white ${className}`}>
@@ -43,16 +51,30 @@ const ClientSection = ({
       </CardHeader>
       <CardContent>
         <div className="mb-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
-            </div>
-            <Input
-              placeholder="Search clients..."
-              className="pl-10 py-2 h-10"
-              defaultValue={clientName}
-            />
-          </div>
+          <Select
+            value={clientId}
+            onValueChange={(value) => {
+              onClientChange(value);
+              // Find the selected client
+              const selectedClient = clients.find(
+                (client) => client.id === value,
+              );
+              if (selectedClient) {
+                // You could update other client fields here if needed
+              }
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a client" />
+            </SelectTrigger>
+            <SelectContent>
+              {clients.map((client) => (
+                <SelectItem key={client.id} value={client.id}>
+                  {client.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
