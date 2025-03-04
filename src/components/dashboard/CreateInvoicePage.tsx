@@ -11,13 +11,9 @@ interface CreateInvoicePageProps {
 
 const CreateInvoicePage = ({ className = "" }: CreateInvoicePageProps) => {
   return (
-    <div className="w-full h-screen relative bg-[#fafafb] overflow-hidden">
-      {/* Sidebar */}
+    <div className={`flex h-screen bg-gray-100 ${className}`}>
       <Sidebar activePath="/invoices" />
-
-      {/* Main Content */}
-      <div className="ml-64 h-full">
-        {/* Topbar */}
+      <main className="flex-1 overflow-auto">
         <Topbar />
 
         {/* Page Content */}
@@ -28,7 +24,7 @@ const CreateInvoicePage = ({ className = "" }: CreateInvoicePageProps) => {
               to="/"
               className="flex items-center text-black hover:text-gray-700"
             >
-              <ChevronLeft className="h-6 w-6 rotate-180" />
+              <ChevronLeft className="h-6 w-6" />
               <span className="font-medium ml-2 font-['Manrope']">Back</span>
             </Link>
           </div>
@@ -214,7 +210,7 @@ const CreateInvoicePage = ({ className = "" }: CreateInvoicePageProps) => {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
