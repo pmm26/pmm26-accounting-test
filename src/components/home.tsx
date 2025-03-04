@@ -143,9 +143,12 @@ const Home = ({ className = "" }: HomeProps) => {
           <Button
             onClick={handleCreateInvoice}
             className="rounded-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 h-auto"
+            asChild
           >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Create new Invoice
+            <Link to="/create-invoice">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Create new Invoice
+            </Link>
           </Button>
         </div>
 
