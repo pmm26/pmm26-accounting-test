@@ -37,7 +37,8 @@ const Sidebar = ({ className = "", activePath = "/" }: SidebarProps) => {
       icon: <CreditCard className="w-5 h-5" />,
       path: "/finance",
       subItems: [
-        { title: "All Invoices", path: "/invoices", active: true },
+        { title: "All Invoices", path: "/invoices" },
+        { title: "Transactions", path: "/transactions", active: true },
         { title: "Recurring Invoices", path: "/recurring-invoices" },
         { title: "Expense Tracking", path: "/expense-tracking" },
         { title: "Recurring Expense", path: "/recurring-expense" },
