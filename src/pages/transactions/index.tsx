@@ -137,7 +137,10 @@ const TransactionsPage = () => {
     }
 
     // Apply category filter
-    if (currentFilters.category) {
+    if (
+      currentFilters.category &&
+      currentFilters.category !== "all-categories"
+    ) {
       filtered = filtered.filter((t) => t.category === currentFilters.category);
     }
 
