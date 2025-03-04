@@ -82,7 +82,7 @@ const CreateInvoiceDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button className="bg-primary text-white">
+        <Button className="bg-orange-600 hover:bg-orange-700 text-white">
           <PlusCircle className="mr-2 h-4 w-4" />
           Create new invoice
         </Button>

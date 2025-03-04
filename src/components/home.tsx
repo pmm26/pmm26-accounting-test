@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./layout/Sidebar";
+import Topbar from "./layout/Topbar";
 import SummaryCards from "./dashboard/SummaryCards";
 import InvoiceControls from "./dashboard/InvoiceControls";
 import InvoiceTable from "./dashboard/InvoiceTable";
 import CreateInvoiceDialog from "./dashboard/CreateInvoiceDialog";
+import { PlusCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface HomeProps {
   className?: string;
@@ -131,13 +134,31 @@ const Home = ({ className = "" }: HomeProps) => {
   return (
     <div className={`flex h-screen bg-gray-100 ${className}`}>
       <Sidebar activePath="/invoices" />
-
       <main className="flex-1 overflow-auto">
+        <Topbar />
+
+        <div className="flex justify-between items-center p-6">
+          <h1 className="text-2xl font-semibold">Invoices List</h1>
+
+          <Button
+            onClick={handleCreateInvoice}
+            className="rounded-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 h-auto"
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Create new Invoice
+          </Button>
+        </div>
+
+        <SummaryCards
+          totalInvoiced={summaryData.totalInvoiced}
+          amountDue={summaryData.amountDue}
+          totalPaid={summaryData.totalPaid}
+        />
+
         <div className="flex flex-col">
           <InvoiceControls
-            onCreateInvoice={handleCreateInvoice}
-            onSearch={handleSearch}
             onFilterChange={handleFilterChange}
+            onSearch={handleSearch}
           />
 
           <div className="p-6">
@@ -152,7 +173,7 @@ const Home = ({ className = "" }: HomeProps) => {
 
           <div className="p-6">
             <div className="bg-white rounded-lg p-4 flex flex-row gap-4 justify-start items-center">
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full">
+              <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-full">
                 <svg
                   width="24"
                   height="24"
@@ -171,7 +192,7 @@ const Home = ({ className = "" }: HomeProps) => {
                 <span>Download</span>
               </button>
 
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full">
+              <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-full">
                 <svg
                   width="24"
                   height="24"
@@ -193,12 +214,6 @@ const Home = ({ className = "" }: HomeProps) => {
           </div>
         </div>
       </main>
-
-      <CreateInvoiceDialog
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        onCreateInvoice={handleInvoiceCreated}
-      />
     </div>
   );
 };
