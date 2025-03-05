@@ -1,21 +1,5 @@
 import React from "react";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+
 import {
   ArrowUpDown,
   MoreHorizontal,
@@ -24,7 +8,23 @@ import {
   CheckCircle,
   Mail,
   Calendar,
+  Badge,
+  Table,
 } from "lucide-react";
+import {
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@radix-ui/react-dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface Invoice {
   id: string;
@@ -207,7 +207,9 @@ const InvoiceTable = ({
                 </TableCell>
                 <TableCell className="py-4">
                   <Badge
-                    className={`rounded-full px-4 py-1 font-normal border-0 ${getStatusBadgeColor(invoice.status)}`}
+                    className={`rounded-full px-4 py-1 font-normal border-0 ${getStatusBadgeColor(
+                      invoice.status
+                    )}`}
                   >
                     {getStatusLabel(invoice.status)}
                   </Badge>
