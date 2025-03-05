@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import InvoiceForm from "./InvoiceForm";
 import { createInvoice, dollarsToCents } from "@/lib/api";
 import type { InvoiceInsert, LineItemInsert } from "@/lib/api";
+import InvoiceForm from "@/components/dashboard/invoices/create/InvoiceForm";
 
 interface CreateInvoiceFormConnectedProps {
   className?: string;

@@ -60,8 +60,8 @@ const InvoiceList = ({ onEdit, className = "" }: InvoiceListProps) => {
       filtered = filtered.filter(
         (invoice) =>
           invoice.invoice_number.toLowerCase().includes(query) ||
-          (invoice.clients?.name &&
-            invoice.clients.name.toLowerCase().includes(query)),
+          (invoice?.clients?.name &&
+            invoice?.clients.name.toLowerCase().includes(query)),
       );
     }
 
