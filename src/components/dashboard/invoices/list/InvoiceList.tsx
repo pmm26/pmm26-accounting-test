@@ -36,6 +36,7 @@ const InvoiceList = ({ onEdit, className = "" }: InvoiceListProps) => {
     setIsLoading(true);
     try {
       const data = await getInvoices();
+      console.log("Fetched invoices:", data); // Debug log
       setInvoices(data);
       setFilteredInvoices(data);
     } catch (error) {

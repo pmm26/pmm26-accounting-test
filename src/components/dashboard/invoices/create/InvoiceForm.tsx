@@ -106,6 +106,7 @@ const InvoiceForm = ({
   const total = subtotal + taxAmount - discount;
 
   const handleSave = () => {
+    console.log("Save button clicked");
     const submitData = {
       ...formData,
       lineItems,
@@ -114,6 +115,7 @@ const InvoiceForm = ({
       discount,
       total,
     };
+    console.log("Submitting data:", submitData);
     onSubmit(submitData);
   };
 

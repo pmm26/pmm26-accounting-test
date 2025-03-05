@@ -9,9 +9,9 @@ import {
   Mail,
   Calendar,
   Badge,
-  Table,
 } from "lucide-react";
 import {
+  Table,
   TableHeader,
   TableRow,
   TableHead,
@@ -208,7 +208,7 @@ const InvoiceTable = ({
                 <TableCell className="py-4">
                   <Badge
                     className={`rounded-full px-4 py-1 font-normal border-0 ${getStatusBadgeColor(
-                      invoice.status
+                      invoice.status,
                     )}`}
                   >
                     {getStatusLabel(invoice.status)}
