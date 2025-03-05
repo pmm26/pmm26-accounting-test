@@ -33,9 +33,32 @@ export const getClient = async (id: string): Promise<Client | null> => {
 };
 
 export const createClient = async (client: ClientInsert): Promise<Client> => {
+  // Get the current user's ID from Supabase auth
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData?.user?.id;
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  // Get the user record from the users table
+  const { data: userRecord, error: userError } = await supabase
+    .from("users")
+    .select("id")
+    .eq("clerk_id", userId)
+    .single();
+
+  if (userError) throw userError;
+
+  // Add the user_id to the client data
+  const clientWithUserId = {
+    ...client,
+    user_id: userRecord.id,
+  };
+
   const { data, error } = await supabase
     .from("clients")
-    .insert(client)
+    .insert(clientWithUserId)
     .select()
     .single();
 

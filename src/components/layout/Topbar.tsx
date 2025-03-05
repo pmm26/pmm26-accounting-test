@@ -1,6 +1,7 @@
 import React from "react";
-import { Search, Bell, ChevronDown, User } from "lucide-react";
+import { Search, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import UserButton from "../auth/UserButton";
 
 interface TopbarProps {
   className?: string;
@@ -29,10 +30,7 @@ const Topbar = ({ className = "" }: TopbarProps) => {
           </div>
 
           <div className="flex items-center space-x-2">
-            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-              <User className="h-6 w-6 text-gray-600" />
-            </div>
-            <ChevronDown className="h-4 w-4 text-gray-600" />
+            <UserButton />
           </div>
         </div>
       </div>

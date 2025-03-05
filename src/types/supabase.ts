@@ -151,6 +151,30 @@ export type Database = {
           },
         ]
       }
+      users: {
+        Row: {
+          clerk_id: string
+          created_at: string | null
+          email: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          clerk_id: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          clerk_id?: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
