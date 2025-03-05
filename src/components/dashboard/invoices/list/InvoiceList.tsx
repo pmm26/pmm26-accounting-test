@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { getInvoices, deleteInvoice, formatCurrency } from "@/lib/api";
 import type { Invoice } from "@/lib/api";
 import InvoiceTable from "./InvoiceTable";
-import InvoiceControls from "./InvoiceControls";
-import SummaryCards from "./SummaryCards";
+import InvoiceControls from "../../common/InvoiceControls";
+import SummaryCards from "../../common/SummaryCards";
 import { useToast } from "@/components/ui/use-toast";
 
 interface InvoiceListProps {

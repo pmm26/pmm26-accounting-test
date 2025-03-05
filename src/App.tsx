@@ -1,8 +1,9 @@
 import { Suspense } from "react";
 import { Routes, Route, useRoutes } from "react-router-dom";
-import Home from "./components/home";
-import CreateInvoicePage from "./components/dashboard/CreateInvoicePage";
+import ListInvoices from "./pages/ListInvoices";
 import routes from "tempo-routes";
+import CreateInvoicePage from "./pages/CreateInvoicePage";
+import DashboardLayout from "./components/layout/DashboardLayout";
 
 function App() {
   // Tempo routes should be used with useRoutes hook
@@ -14,8 +15,10 @@ function App() {
       <>
         {tempoRoutes}
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/create-invoice" element={<CreateInvoicePage />} />
+          <Route path="/" element={<DashboardLayout activePath="/invoices" />}>
+            <Route index element={<ListInvoices />} />
+            <Route path="create-invoice" element={<CreateInvoicePage />} />
+          </Route>
         </Routes>
       </>
     </Suspense>
