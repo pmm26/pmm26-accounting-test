@@ -15,7 +15,9 @@ interface InvoiceHeaderProps {
   invoiceDate?: string;
   dueDate?: string;
   currency?: string;
+  status?: string;
   className?: string;
+  onFieldChange?: (field: string, value: string) => void;
 }
 
 const InvoiceHeader = ({
@@ -23,7 +25,9 @@ const InvoiceHeader = ({
   invoiceDate = "",
   dueDate = "",
   currency = "USD",
+  status = "draft",
   className = "",
+  onFieldChange = () => {},
 }: InvoiceHeaderProps) => {
   return (
     <div className={`bg-white rounded-lg shadow-sm p-6 ${className}`}>
@@ -41,6 +45,7 @@ const InvoiceHeader = ({
               value={invoiceNumber}
               className="mt-1 h-10"
               placeholder="INV-001"
+              onChange={(e) => onFieldChange("invoiceNumber", e.target.value)}
             />
           </div>
 
@@ -51,7 +56,10 @@ const InvoiceHeader = ({
             >
               Currency
             </Label>
-            <Select defaultValue={currency}>
+            <Select
+              value={currency}
+              onValueChange={(value) => onFieldChange("currency", value)}
+            >
               <SelectTrigger id="currency" className="mt-1 h-10">
                 <SelectValue placeholder="Select currency" />
               </SelectTrigger>
@@ -81,6 +89,7 @@ const InvoiceHeader = ({
                 value={invoiceDate}
                 className="mt-1 h-10 pl-10"
                 placeholder="Select date"
+                onChange={(e) => onFieldChange("invoiceDate", e.target.value)}
               />
               <Calendar className="absolute left-3 top-[18px] h-4 w-4 text-gray-500" />
             </div>
@@ -100,6 +109,7 @@ const InvoiceHeader = ({
                 value={dueDate}
                 className="mt-1 h-10 pl-10"
                 placeholder="Select date"
+                onChange={(e) => onFieldChange("dueDate", e.target.value)}
               />
               <Clock className="absolute left-3 top-[18px] h-4 w-4 text-gray-500" />
             </div>
@@ -114,7 +124,10 @@ const InvoiceHeader = ({
             >
               Payment Terms
             </Label>
-            <Select defaultValue="net30">
+            <Select
+              value="net30"
+              onValueChange={(value) => onFieldChange("paymentTerms", value)}
+            >
               <SelectTrigger id="paymentTerms" className="mt-1 h-10">
                 <SelectValue placeholder="Select terms" />
               </SelectTrigger>
@@ -135,7 +148,10 @@ const InvoiceHeader = ({
             >
               Status
             </Label>
-            <Select defaultValue="draft">
+            <Select
+              value={status}
+              onValueChange={(value) => onFieldChange("status", value)}
+            >
               <SelectTrigger id="invoiceStatus" className="mt-1 h-10">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>

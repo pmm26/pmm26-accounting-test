@@ -35,7 +35,6 @@ interface InvoiceFormProps {
     additionalInfo?: string;
     status?: string;
   };
-  clients?: Client[];
   onSubmit?: (data: any) => void;
   onCancel?: () => void;
   className?: string;
@@ -44,12 +43,35 @@ interface InvoiceFormProps {
 
 const InvoiceForm = ({
   initialData = {},
-  clients = [],
   onSubmit = () => {},
   onCancel = () => {},
   className = "",
   isPending = false,
 }: InvoiceFormProps) => {
+  const [formData, setFormData] = useState({
+    invoiceNumber:
+      initialData.invoiceNumber ||
+      `INV-${Math.floor(1000 + Math.random() * 9000)}`,
+    invoiceDate:
+      initialData.invoiceDate || new Date().toISOString().split("T")[0],
+    dueDate:
+      initialData.dueDate ||
+      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+    currency: initialData.currency || "USD",
+    status: initialData.status || "draft",
+    clientId: initialData.clientId || "",
+    clientName: initialData.clientName || "",
+    clientEmail: initialData.clientEmail || "",
+    clientPhone: initialData.clientPhone || "",
+    clientAddress: initialData.clientAddress || "",
+    clientType: initialData.clientType || "business",
+    notes: initialData.notes || "",
+    paymentTerms: initialData.paymentTerms || "net30",
+    additionalInfo: initialData.additionalInfo || "",
+  });
+
   const [lineItems, setLineItems] = useState<LineItem[]>(
     initialData.lineItems || [
       {
@@ -84,19 +106,52 @@ const InvoiceForm = ({
   const total = subtotal + taxAmount - discount;
 
   const handleSave = () => {
-    const formData = {
-      ...initialData,
+    const submitData = {
+      ...formData,
       lineItems,
       subtotal,
       taxAmount,
       discount,
       total,
     };
-    onSubmit(formData);
+    onSubmit(submitData);
   };
 
   const handleLineItemsChange = (updatedItems: LineItem[]) => {
     setLineItems(updatedItems);
+  };
+
+  const handleClientChange = (clientId: string, client?: Client) => {
+    if (client) {
+      setFormData((prev) => ({
+        ...prev,
+        clientId,
+        clientName: client.name,
+        clientEmail: client.email || "",
+        clientPhone: client.phone || "",
+        clientAddress: client.address || "",
+        clientType: client.type || "business",
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        clientId,
+      }));
+    }
+  };
+
+  const handleInvoiceHeaderChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleNotesChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   return (
@@ -105,20 +160,24 @@ const InvoiceForm = ({
         <h1 className="text-2xl font-bold text-gray-900">Create Invoice</h1>
 
         <InvoiceHeader
-          invoiceNumber={initialData.invoiceNumber}
-          invoiceDate={initialData.invoiceDate}
-          dueDate={initialData.dueDate}
-          currency={initialData.currency}
+          invoiceNumber={formData.invoiceNumber}
+          invoiceDate={formData.invoiceDate}
+          dueDate={formData.dueDate}
+          currency={formData.currency}
+          status={formData.status}
+          onFieldChange={handleInvoiceHeaderChange}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <ClientSection
-              clientName={initialData.clientName}
-              clientEmail={initialData.clientEmail}
-              clientPhone={initialData.clientPhone}
-              clientAddress={initialData.clientAddress}
-              clientType={initialData.clientType}
+              clientId={formData.clientId}
+              clientName={formData.clientName}
+              clientEmail={formData.clientEmail}
+              clientPhone={formData.clientPhone}
+              clientAddress={formData.clientAddress}
+              clientType={formData.clientType}
+              onClientChange={handleClientChange}
             />
           </div>
 
@@ -138,9 +197,10 @@ const InvoiceForm = ({
         />
 
         <InvoiceNotes
-          notes={initialData.notes}
-          paymentTerms={initialData.paymentTerms}
-          additionalInfo={initialData.additionalInfo}
+          notes={formData.notes}
+          paymentTerms={formData.paymentTerms}
+          additionalInfo={formData.additionalInfo}
+          onFieldChange={handleNotesChange}
         />
 
         <InvoiceActions

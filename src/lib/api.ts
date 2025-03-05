@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { Database } from "@/types/supabase";
+import type { Database } from "@/types/supabase";
 
 export type Client = Database["public"]["Tables"]["clients"]["Row"];
 export type Invoice = Database["public"]["Tables"]["invoices"]["Row"];
@@ -68,7 +68,7 @@ export const deleteClient = async (id: string): Promise<void> => {
 export const getInvoices = async (): Promise<Invoice[]> => {
   const { data, error } = await supabase
     .from("invoices")
-    .select("*, clients(*)")
+    .select("*, clients(id, name, email)")
     .order("created_at", { ascending: false });
 
   if (error) throw error;
@@ -78,7 +78,7 @@ export const getInvoices = async (): Promise<Invoice[]> => {
 export const getInvoice = async (id: string): Promise<Invoice | null> => {
   const { data, error } = await supabase
     .from("invoices")
-    .select("*, clients(*)")
+    .select("*, clients(id, name, email)")
     .eq("id", id)
     .single();
 

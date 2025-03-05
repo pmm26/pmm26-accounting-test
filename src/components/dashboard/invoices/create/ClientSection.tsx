@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,8 +10,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Plus, X } from "lucide-react";
-
-import { Client } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
+import ClientSelector from "./ClientSelector";
+import { Client, createClient } from "@/lib/api";
 
 interface ClientSectionProps {
   className?: string;
@@ -21,8 +30,7 @@ interface ClientSectionProps {
   clientPhone?: string;
   clientAddress?: string;
   clientType?: string;
-  clients?: Client[];
-  onClientChange?: (clientId: string) => void;
+  onClientChange?: (clientId: string, client?: Client) => void;
 }
 
 const ClientSection = ({
@@ -33,9 +41,65 @@ const ClientSection = ({
   clientPhone = "",
   clientAddress = "",
   clientType = "business",
-  clients = [],
   onClientChange = () => {},
 }: ClientSectionProps) => {
+  const [isNewClientDialogOpen, setIsNewClientDialogOpen] = useState(false);
+  const [newClient, setNewClient] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    type: "business",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const handleClientSelect = (value: string, client?: Client) => {
+    onClientChange(value, client);
+  };
+
+  const handleNewClientChange = (field: string, value: string) => {
+    setNewClient((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleCreateClient = async () => {
+    if (!newClient.name) {
+      toast({
+        title: "Error",
+        description: "Client name is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const createdClient = await createClient(newClient);
+      toast({
+        title: "Success",
+        description: "Client created successfully",
+      });
+      setIsNewClientDialogOpen(false);
+      setNewClient({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        type: "business",
+      });
+      onClientChange(createdClient.id, createdClient);
+    } catch (error) {
+      console.error("Error creating client:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create client. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Card className={`w-full bg-white ${className}`}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -43,7 +107,10 @@ const ClientSection = ({
           Client Information
         </CardTitle>
         <div className="flex items-center space-x-2">
-          <button className="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+          <button
+            className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+            onClick={() => setIsNewClientDialogOpen(true)}
+          >
             <Plus className="h-4 w-4 mr-1" />
             Add New Client
           </button>
@@ -51,30 +118,7 @@ const ClientSection = ({
       </CardHeader>
       <CardContent>
         <div className="mb-4">
-          <Select
-            value={clientId}
-            onValueChange={(value) => {
-              onClientChange(value);
-              // Find the selected client
-              const selectedClient = clients.find(
-                (client) => client.id === value,
-              );
-              if (selectedClient) {
-                // You could update other client fields here if needed
-              }
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a client" />
-            </SelectTrigger>
-            <SelectContent>
-              {clients.map((client) => (
-                <SelectItem key={client.id} value={client.id}>
-                  {client.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <ClientSelector value={clientId} onValueChange={handleClientSelect} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -84,23 +128,20 @@ const ClientSection = ({
               id="clientName"
               placeholder="Enter client name"
               className="h-10"
-              defaultValue={clientName || "Acme Corporation"}
+              value={clientName}
+              readOnly
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="clientType">Client Type</Label>
-            <Select defaultValue={clientType}>
-              <SelectTrigger className="h-10">
-                <SelectValue placeholder="Select client type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="business">Business</SelectItem>
-                <SelectItem value="individual">Individual</SelectItem>
-                <SelectItem value="nonprofit">Non-Profit</SelectItem>
-                <SelectItem value="government">Government</SelectItem>
-              </SelectContent>
-            </Select>
+            <Input
+              id="clientType"
+              placeholder="Client type"
+              className="h-10"
+              value={clientType}
+              readOnly
+            />
           </div>
 
           <div className="space-y-2">
@@ -110,7 +151,8 @@ const ClientSection = ({
               type="email"
               placeholder="client@example.com"
               className="h-10"
-              defaultValue={clientEmail || "contact@acmecorp.com"}
+              value={clientEmail}
+              readOnly
             />
           </div>
 
@@ -120,7 +162,8 @@ const ClientSection = ({
               id="clientPhone"
               placeholder="+1 (555) 123-4567"
               className="h-10"
-              defaultValue={clientPhone || "+1 (555) 123-4567"}
+              value={clientPhone}
+              readOnly
             />
           </div>
 
@@ -130,46 +173,105 @@ const ClientSection = ({
               id="clientAddress"
               placeholder="Enter client address"
               className="h-10"
-              defaultValue={
-                clientAddress ||
-                "123 Business Ave, Suite 100, San Francisco, CA 94107"
-              }
+              value={clientAddress}
+              readOnly
             />
           </div>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium">Recent Invoices</h4>
-            <span className="text-xs text-gray-500">View All</span>
-          </div>
-          <div className="mt-2 space-y-2">
-            <div className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
-              <div>
-                <p className="text-sm font-medium">INV-2023-001</p>
-                <p className="text-xs text-gray-500">Due: May 15, 2023</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-medium">$1,250.00</p>
-                <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                  Paid
-                </span>
+        <Dialog
+          open={isNewClientDialogOpen}
+          onOpenChange={setIsNewClientDialogOpen}
+        >
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Create New Client</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="newClientName">Client Name *</Label>
+                  <Input
+                    id="newClientName"
+                    placeholder="Enter client name"
+                    value={newClient.name}
+                    onChange={(e) =>
+                      handleNewClientChange("name", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="newClientType">Client Type</Label>
+                  <Select
+                    value={newClient.type}
+                    onValueChange={(value) =>
+                      handleNewClientChange("type", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select client type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="business">Business</SelectItem>
+                      <SelectItem value="individual">Individual</SelectItem>
+                      <SelectItem value="nonprofit">Non-Profit</SelectItem>
+                      <SelectItem value="government">Government</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="newClientEmail">Email Address</Label>
+                  <Input
+                    id="newClientEmail"
+                    type="email"
+                    placeholder="client@example.com"
+                    value={newClient.email}
+                    onChange={(e) =>
+                      handleNewClientChange("email", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="newClientPhone">Phone Number</Label>
+                  <Input
+                    id="newClientPhone"
+                    placeholder="+1 (555) 123-4567"
+                    value={newClient.phone}
+                    onChange={(e) =>
+                      handleNewClientChange("phone", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="newClientAddress">Billing Address</Label>
+                  <Input
+                    id="newClientAddress"
+                    placeholder="Enter client address"
+                    value={newClient.address}
+                    onChange={(e) =>
+                      handleNewClientChange("address", e.target.value)
+                    }
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
-              <div>
-                <p className="text-sm font-medium">INV-2023-002</p>
-                <p className="text-xs text-gray-500">Due: June 1, 2023</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-medium">$2,500.00</p>
-                <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">
-                  Pending
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsNewClientDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleCreateClient} disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Create Client"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );

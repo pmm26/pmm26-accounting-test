@@ -15,6 +15,7 @@ interface InvoiceNotesProps {
   paymentTerms?: string;
   additionalInfo?: string;
   className?: string;
+  onFieldChange?: (field: string, value: string) => void;
 }
 
 const InvoiceNotes = ({
@@ -22,6 +23,7 @@ const InvoiceNotes = ({
   paymentTerms = "net30",
   additionalInfo = "",
   className = "",
+  onFieldChange = () => {},
 }: InvoiceNotesProps) => {
   return (
     <Card className={`p-6 bg-white shadow-sm ${className}`}>
@@ -31,14 +33,18 @@ const InvoiceNotes = ({
           <Textarea
             placeholder="Add any notes or additional information for your client..."
             className="min-h-[100px] w-full"
-            defaultValue={notes}
+            value={notes}
+            onChange={(e) => onFieldChange("notes", e.target.value)}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="payment-terms">Payment Terms</Label>
-            <Select defaultValue={paymentTerms}>
+            <Select
+              value={paymentTerms}
+              onValueChange={(value) => onFieldChange("paymentTerms", value)}
+            >
               <SelectTrigger id="payment-terms" className="mt-2">
                 <SelectValue placeholder="Select payment terms" />
               </SelectTrigger>
@@ -59,7 +65,8 @@ const InvoiceNotes = ({
               id="additional-info"
               placeholder="Payment instructions, bank details, etc."
               className="mt-2 min-h-[80px]"
-              defaultValue={additionalInfo}
+              value={additionalInfo}
+              onChange={(e) => onFieldChange("additionalInfo", e.target.value)}
             />
           </div>
         </div>
