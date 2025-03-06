@@ -1,13 +1,21 @@
 import React from "react";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import UserButton from "../auth/UserButton";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 interface TopbarProps {
   className?: string;
 }
 
 const Topbar = ({ className = "" }: TopbarProps) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate("/logout");
+  };
+
   return (
     <div className={`w-full bg-white border-b border-gray-200 ${className}`}>
       <div className="flex justify-between items-center px-8 py-6">
@@ -28,6 +36,16 @@ const Topbar = ({ className = "" }: TopbarProps) => {
               10
             </span>
           </div>
+
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Logout</span>
+          </Button>
 
           <div className="flex items-center space-x-2">
             <UserButton />

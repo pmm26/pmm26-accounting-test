@@ -6,8 +6,12 @@ import CreateInvoicePage from "./pages/CreateInvoicePage";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import Logout from "./pages/Logout";
 import AuthWrapper from "./components/auth/AuthWrapper";
 import { useAuth } from "@clerk/clerk-react";
+import AuthDiagnostics from "./pages/AuthDiagnostics";
+import SupabaseDiagnostics from "./pages/SupabaseDiagnostics";
+import ClerkJwtHelper from "./pages/ClerkJwtHelper";
 
 function App() {
   // Tempo routes should be used with useRoutes hook
@@ -23,6 +27,10 @@ function App() {
           {/* Public routes */}
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/auth-diagnostics" element={<AuthDiagnostics />} />
+          <Route path="/supabase-diagnostics" element={<SupabaseDiagnostics />} />
+          <Route path="/clerk-jwt-helper" element={<ClerkJwtHelper />} />
 
           {/* Add a catch-all for Tempo routes */}
           {import.meta.env.VITE_TEMPO === "true" && (
